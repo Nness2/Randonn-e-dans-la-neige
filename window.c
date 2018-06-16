@@ -71,7 +71,7 @@ static int colx[100];
 static int colz[100];
 static int maxcol=15;
 static int nbcol=0;
-
+static int snowing = 0;
 static GLuint _planeTexId = 0;
 static GLboolean _fog = GL_FALSE;
 static GLboolean _mipmap = GL_FALSE;
@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
                          _wW, _wH, GL4DW_RESIZABLE | GL4DW_SHOWN))
     return 1;
   /* charge l'avion */
-  assimpInit("models/fish/bird.obj");
+  assimpInit("models/fish/fish.obj");
   init();
   atexit(quit);
   gl4duwResizeFunc(resize);
@@ -568,27 +568,28 @@ static void draw(void) {
   glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, bleu);
   gl4dgDraw(_quad);
 
-
+if (snowing==1){
   for (int i = 0 ; i < 1000 ; i++){
 
     if (my[i] > -20){
-
-      gl4duPushMatrix(); {
-      glUseProgram(_pId3);
-        my[i] -=1;
-        gl4duTranslatef(mx[i]+_cam.x, my[i], mz[i]+_cam.z);
-        gl4duRotatef(0, 0, 0, 0);
-        gl4duScalef(0.5, 0.5, 0.5);
-        gl4duSendMatrices();
-      } gl4duPopMatrix();
-      glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
-      gl4dgDraw(_snow);
-    }
+    gl4duPushMatrix(); {
+    glEnable(GL_CULL_FACE);
+    my[i] -= 1;
+    gl4duTranslatef(mx[i]+_cam.x, my[i], mz[i]+_cam.z);
+    gl4duRotatef(180, 180, 180, 0);
+    gl4duScalef(1, 1, 1);
+  	gl4duSendMatrices();
+  	assimpDrawScene();
+  } gl4duPopMatrix();
+}
    else{
       my[i] = 80;
     }
   } 
-
+}
+  if((int)tour> 50){
+  	snowing = 1;
+  	}
   for (int i = 0 ; i < 1000 ; i++){
       creat_grass(mx[i],mz[i]);
 }
