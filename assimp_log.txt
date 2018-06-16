@@ -1,0 +1,15 @@
+Info,  T0: Load models/fish/bird.obj
+Info,  T0: Found a matching importer for this file format
+Info,  T0: Import root directory is 'models/fish/'
+Error, T0: OBJ: failed to locate material Mat, skipping
+Skipping one or more lines with the same contents
+Info,  T0: Entering post processing pipeline
+Info,  T0: TriangulateProcess finished. All polygons have been triangulated.
+Info,  T0: Points: 0, Lines: 0, Triangles: 5, Polygons: 0 (Meshes, X = removed)
+Info,  T0: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Error, T0: Failed to compute tangents; need UV data in channel0
+Skipping one or more lines with the same contents
+Info,  T0: CalcTangentsProcess finished. Tangents have been calculated
+Info,  T0: JoinVerticesProcess finished | Verts in: 2106 out: 725 | ~65.6%
+Info,  T0: Cache relevant are 3 meshes (1032 faces). Average output ACMR is 0.846899
+Info,  T0: Leaving post processing pipeline
