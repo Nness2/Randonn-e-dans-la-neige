@@ -239,39 +239,34 @@ int colision (){
 static void idle(void) {
   double dt, dtheta = M_PI, pas = 15.0;
   dt = get_dt();
-  //_cycle += dt;
   if((count>=10)&&(count<=1000)){
     _cycle += dt;
     tour++;
     count=0;
-  if((tour>=45)&&(ok!=1)){
+    if((tour>=45)&&(ok!=1)){
       dayN=dayN-0.02;      
       dayL=dayL-0.02;
-      //printf("B::%lf\nG::%lf\n",dayN,dayL);
       if((dayN>=0.12)&&(dayL>=0.02)){
         glClearColor(0.0f, dayL, dayN, 0.0f);
       }
-  }
-  if(tour==140){
-    dayN=0.12;dayL=0.02;
-  }
-  if(tour>160){
-    ok=1;
-    dayN=dayN+0.02;      
-    dayL=dayL+0.02;
-      //printf("B::%lf\nG::%lf\n",dayN,dayL);
+    }
+    if(tour==140){
+      dayN=0.12;dayL=0.02;
+    }
+    if(tour>160){
+      ok=1;
+      dayN=dayN+0.02;      
+      dayL=dayL+0.02;
       if((dayN<=0.5)&&(dayL<=0.4)){
-            glClearColor(0.0f, dayL, dayN, 0.0f);
+        glClearColor(0.0f, dayL, dayN, 0.0f);
       }
+    }
+    if(tour==200){
+      tour=0;
+      ok=0;
+    }
   }
 
-  if(tour==200){
-    tour=0;
-    ok=0;
-  }
-    //printf("------>>>>>%d\n",tour);
-  }
-  //if(count>75 && count<150)
   if(_keys[KLEFT])
     _cam.theta += dt * dtheta;
   if(_keys[KRIGHT])
@@ -281,7 +276,7 @@ static void idle(void) {
     if(heightMapAltitude(_cam.x += -dt * pas * sin(_cam.theta), _cam.z += -dt * pas * cos(_cam.theta))
       < heightMapAltitude(0,0)-3 || colision()==1){
       _cam.x += dt * pas * sin(_cam.theta);
-    _cam.z += dt * pas * cos(_cam.theta);
+      _cam.z += dt * pas * cos(_cam.theta);
     }
   }
   if(_keys[KDOWN]) {
@@ -290,7 +285,8 @@ static void idle(void) {
       < heightMapAltitude(0,0)-3 || colision()==1){
       _cam.x += -dt * pas * sin(_cam.theta);
     _cam.z += -dt * pas * cos(_cam.theta);
-  }}
+    }
+  }
   double lt, t;
   static Uint32 p0 = 0, p;
   lt = ((t = SDL_GetTicks()) - p0) / 100000.0;
@@ -395,8 +391,9 @@ static void pmotion(int x, int y) {
   _xm = x; 
   _ym = y;
 }
+
 int rand_a_b(int a, int b){
-    return rand()%(b-a) +a;
+  return rand()%(b-a) +a;
 }
 
 void init_meteo (){
@@ -405,42 +402,42 @@ void init_meteo (){
     mz[i] = rand_a_b(-100,100);
     my[i] = rand_a_b(0,100);
   }
-
   initial=1;
 }
 
 void creat_tree (int x, int z){
-GLfloat vert[] = {0, 1, 0, 1}, marron[] = {0.47, 0.2, 0.07, 1}, blanc[] = {1, 1, 1, 1};
-    gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  GLfloat vert[] = {0, 1, 0, 1}, marron[] = {0.47, 0.2, 0.07, 1}, blanc[] = {1, 1, 1, 1};
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
     gl4duTranslatef(x, heightMapAltitude(x,z), z);
     gl4duRotatef(0, 0, 0, 0);
     gl4duScalef(1, 7, 1);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, marron);
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, marron);
   gl4dgDraw(_cube);
 
-      gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
     gl4duTranslatef(x, heightMapAltitude(x,z)+7, z);
     gl4duRotatef(0, 0, 0, 0);
     gl4duScalef(4, 4, 4);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
   gl4dgDraw(_sphere);
 
-        gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
     gl4duTranslatef(x, heightMapAltitude(x,z)+8, z);
     gl4duRotatef(0, 0, 0, 0);
     gl4duScalef(4, 4, 4);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
+
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
   gl4dgDraw(_sphere);
-    if (nbcol < maxcol){
+  if (nbcol < maxcol){
     colx[nbcol] = x;
     colz[nbcol] = z;
     nbcol++;
@@ -448,36 +445,35 @@ glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
 }
 
 void creat_snowman (int x, int z){
-GLfloat vert[] = {0, 1, 0, 1}, red[] = {1, 0, 0, 1}, blanc[] = {1, 1, 1, 1};
-
-      gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  GLfloat vert[] = {0, 1, 0, 1}, red[] = {1, 0, 0, 1}, blanc[] = {1, 1, 1, 1};
+  gl4duPushMatrix(); {
+  glUseProgram(_pId3);
     gl4duTranslatef(x, heightMapAltitude(x,z)+0.7, z);
     gl4duRotatef(0, 0, 0, 0);
     gl4duScalef(1, 1, 1);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
   gl4dgDraw(_sphere);
 
-        gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
     gl4duTranslatef(x, heightMapAltitude(x,z)+2.2, z);
     gl4duRotatef(0, 0, 0, 0);
     gl4duScalef(0.6, 0.6, 0.6);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
   gl4dgDraw(_sphere);
 
-          gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
     gl4duTranslatef(x+0.5, heightMapAltitude(x+0.5,z)+2.2, z);
     gl4duRotatef(-180, -180, -180, 0);
     gl4duScalef(0.1, 0.6, 0.1);
     gl4duSendMatrices();
   } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, red);
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, red);
   gl4dgDraw(_sphere);
 
   if (nbcol < maxcol){
@@ -490,23 +486,20 @@ glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, red);
 
 void creat_grass (int x, int z){
   GLfloat vert[] = {0, 1, 0, 1};
-
     gl4duPushMatrix(); {
-    glUseProgram(_pId3);
-    gl4duTranslatef(x, heightMapAltitude(x,z), z);
-    gl4duRotatef(20, 0, 0, 0);
-    gl4duScalef(0.01, 0.5, 0.01);
-    gl4duSendMatrices();
-  } gl4duPopMatrix();
-glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
+      glUseProgram(_pId3);
+      gl4duTranslatef(x, heightMapAltitude(x,z), z);
+      gl4duRotatef(20, 0, 0, 0);
+      gl4duScalef(0.01, 0.5, 0.01);
+      gl4duSendMatrices();
+    } gl4duPopMatrix();
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
   gl4dgDraw(_cube);
 }
 
 static void draw(void) {
   if (initial == 0)
     init_meteo();
-  
-
   int xm, ym;
   SDL_PumpEvents();
   SDL_GetMouseState(&xm, &ym);
@@ -524,7 +517,6 @@ static void draw(void) {
 
   gl4duBindMatrix("modelViewMatrix");
   gl4duLoadIdentityf();
-  /* je regarde l'avion depuis 1, 0, -1 */
   gl4duLookAtf(_cam.x, landscape_y + 2.0, _cam.z, 
          _cam.x - sin(_cam.theta), landscape_y + 2.0 - (ym - (_windowHeight >> 1)) / (GLfloat)_windowHeight, _cam.z - cos(_cam.theta), 
          0.0, 1.0,0.0);
@@ -539,7 +531,7 @@ static void draw(void) {
 
   glUseProgram(_landscape_pId);
   gl4duPushMatrix(); {
-      gl4duScalef(_landscape_scale_xz, _landscape_scale_y, _landscape_scale_xz);
+    gl4duScalef(_landscape_scale_xz, _landscape_scale_y, _landscape_scale_xz);
     gl4duSendMatrices();
   } gl4duPopMatrix();
   glDisable(GL_CULL_FACE);
@@ -559,7 +551,7 @@ static void draw(void) {
 // printf("%d\n", colision());
 // printf("%d\n",(int)_cam.x-colx[0]);
   gl4duPushMatrix(); {
- glUseProgram(_pId3);
+  glUseProgram(_pId3);
     gl4duTranslatef(40, heightMapAltitude(0,0)-3, 0.0);
     gl4duRotatef(-90, 1, 0, 0);
     gl4duScalef(2000, 2000, 2000);
@@ -568,35 +560,31 @@ static void draw(void) {
   glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, bleu);
   gl4dgDraw(_quad);
 
-if (snowing==1){
-  for (int i = 0 ; i < 1000 ; i++){
+  if (snowing==1){
+    for (int i = 0 ; i < 1000 ; i++){
 
-    if (my[i] > -20){
-    gl4duPushMatrix(); {
-    glEnable(GL_CULL_FACE);
-    my[i] -= 1;
-    gl4duTranslatef(mx[i]+_cam.x, my[i], mz[i]+_cam.z);
-    gl4duRotatef(180, 180, 180, 0);
-    gl4duScalef(1, 1, 1);
-  	gl4duSendMatrices();
-  	assimpDrawScene();
-  } gl4duPopMatrix();
-}
-   else{
-      my[i] = 80;
+      if (my[i] > -20){
+        gl4duPushMatrix(); {
+        glEnable(GL_CULL_FACE);
+        my[i] -= 1;
+        gl4duTranslatef(mx[i]+_cam.x, my[i], mz[i]+_cam.z);
+        gl4duRotatef(180, 180, 180, 0);
+        gl4duScalef(1, 1, 1);
+  	    gl4duSendMatrices();
+  	    assimpDrawScene();
+      } gl4duPopMatrix();
     }
-  } 
-}
-  if((int)tour> 50){
+      else
+        my[i] = 80;
+    } 
+  }
+  if((int)tour> 50)
   	snowing = 1;
-  	}
-  for (int i = 0 ; i < 1000 ; i++){
+  for (int i = 0 ; i < 1000 ; i++)
       creat_grass(mx[i],mz[i]);
-}
 
-
-glUseProgram(_sun_pId);
-    gl4duPushMatrix(); {
+  glUseProgram(_sun_pId);
+  gl4duPushMatrix(); {
     //gl4duTranslatef(temp[0], temp[1], temp[2]);
     gl4duTranslatef(-700, 150, -700);
     gl4duScalef(15, 15, 15);
