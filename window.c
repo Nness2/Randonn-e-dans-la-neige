@@ -69,7 +69,7 @@ static int mz[1000];
 static int my[1000];
 static int colx[100];
 static int colz[100];
-static int maxcol=15;
+static int maxcol=99;
 static int nbcol=0;
 static int snowing = 0;
 static GLuint _planeTexId = 0;
@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
                          _wW, _wH, GL4DW_RESIZABLE | GL4DW_SHOWN))
     return 1;
   /* charge l'avion */
-  assimpInit("models/fish/fish.obj");
+  assimpInit("models/snow.obj");
   init();
   atexit(quit);
   gl4duwResizeFunc(resize);
@@ -277,6 +277,7 @@ static void idle(void) {
       < heightMapAltitude(0,0)-3 || colision()==1){
       _cam.x += dt * pas * sin(_cam.theta);
       _cam.z += dt * pas * cos(_cam.theta);
+      _cam.theta -= dt * dtheta;
     }
   }
   if(_keys[KDOWN]) {
@@ -444,6 +445,40 @@ void creat_tree (int x, int z){
   }
 }
 
+
+void creat_tree_big (int x, int z){
+  GLfloat vert[] = {0, 1, 0, 1}, marron[] = {0.47, 0.2, 0.07, 1}, blanc[] = {1, 1, 1, 1};
+  gl4duPushMatrix(); {
+    glUseProgram(_pId3);
+    gl4duTranslatef(x, heightMapAltitude(x,z), z);
+    gl4duRotatef(0, 0, 0, 0);
+    gl4duScalef(1, 12, 1);
+    gl4duSendMatrices();
+  } gl4duPopMatrix();
+  glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, marron);
+  gl4dgDraw(_cube);
+
+  for (int i = 1; i < 7; ++i){
+    gl4duPushMatrix(); {
+      glUseProgram(_pId3);
+      gl4duTranslatef(x, heightMapAltitude(x,z)+10+i*1.3, z);
+      gl4duRotatef(0, 0, 0, 0);
+      gl4duScalef(4-i/6, 4-i/6, 4-i/6);
+      gl4duSendMatrices();
+    } gl4duPopMatrix();
+    glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
+    gl4dgDraw(_sphere);
+  }
+
+  // glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
+  // gl4dgDraw(_sphere);
+  if (nbcol < maxcol){
+    colx[nbcol] = x;
+    colz[nbcol] = z;
+    nbcol++;
+  }
+}
+
 void creat_snowman (int x, int z){
   GLfloat vert[] = {0, 1, 0, 1}, red[] = {1, 0, 0, 1}, blanc[] = {1, 1, 1, 1};
   gl4duPushMatrix(); {
@@ -484,8 +519,8 @@ void creat_snowman (int x, int z){
 }
 
 
-void creat_grass (int x, int z){
-  GLfloat vert[] = {0, 1, 0, 1};
+void creat_grass (int x, int z, int i){
+  GLfloat vert[] = {0, 1, 0, 1}, bleu[] = {0, 0, 1, 1}, blanc[] = {1, 1, 1, 1};
     gl4duPushMatrix(); {
       glUseProgram(_pId3);
       gl4duTranslatef(x, heightMapAltitude(x,z), z);
@@ -495,6 +530,19 @@ void creat_grass (int x, int z){
     } gl4duPopMatrix();
   glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, vert);
   gl4dgDraw(_cube);
+  if (i%2==0)
+    glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, blanc);
+  else
+    glUniform4fv(glGetUniformLocation(_pId3, "couleur"), 1, bleu);
+  gl4duPushMatrix(); {
+    glEnable(GL_CULL_FACE);
+    gl4duTranslatef(x, heightMapAltitude(x,z)+0.5, z);
+    gl4duRotatef(49, 49, 49, 0);
+    gl4duScalef(0.6, 0.6, 0.6);
+    gl4duSendMatrices();
+    assimpDrawScene();
+  } gl4duPopMatrix();
+
 }
 
 static void draw(void) {
@@ -538,16 +586,19 @@ static void draw(void) {
   /* je dessine la bounding sphere avec _pId2 */
   glBindTexture(GL_TEXTURE_1D, _terrain_tId);
   gl4dgDraw(_landscape);
+  for (int i = 0; i < 20; ++i){
+    if (heightMapAltitude(0,0)-3 < heightMapAltitude(mx[i],mz[i]))
+    creat_tree(mx[i],mz[i]);
+  }
+  for (int i = 21; i < 26; ++i){
+    if (heightMapAltitude(0,0)-3 < heightMapAltitude(mx[i],mz[i]))
+      creat_snowman(mx[i],mz[i]);
+  }
+  for (int i = 30; i < 35; ++i){
+    if (heightMapAltitude(0,0)-3 < heightMapAltitude(mx[i],mz[i]))
+      creat_tree_big(mx[i],mz[i]);
+  }
 
-  creat_tree(3,8);
-  creat_tree(1,30);
-  creat_tree(31,10);
-  creat_tree(-3,-8);
-  creat_tree(1,-30);
-  creat_tree(-31,10);
-  creat_snowman(35,5);
-  creat_snowman(5,40);
-  creat_snowman(0,5);
 // printf("%d\n", colision());
 // printf("%d\n",(int)_cam.x-colx[0]);
   gl4duPushMatrix(); {
@@ -581,7 +632,7 @@ static void draw(void) {
   if((int)tour> 50)
   	snowing = 1;
   for (int i = 0 ; i < 1000 ; i++)
-      creat_grass(mx[i],mz[i]);
+      creat_grass(mx[i],mz[i], i);
 
   glUseProgram(_sun_pId);
   gl4duPushMatrix(); {

@@ -1,6 +1,6 @@
-Info,  T0: Load models/fish/fish.obj
+Info,  T0: Load models/snow.obj
 Info,  T0: Found a matching importer for this file format
-Info,  T0: Import root directory is 'models/fish/'
+Info,  T0: Import root directory is 'models/'
 Error, T0: OBJ: Unable to locate material file FLOCON.mtl
 Error, T0: OBJ: failed to locate material Material__48, skipping
 Info,  T0: Entering post processing pipeline
